@@ -1,0 +1,45 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.7.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
+}
+
+group = 'com.ebay.assignment'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+sourceSets {
+	// Note that just declaring this sourceset creates two configurations.
+	intTest {
+		java {
+			compileClasspath += main.output
+			runtimeClasspath += main.output
+		}
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	intTestCompile.extendsFrom testCompile
+	intTestRuntime.extendsFrom testRuntime
+}
+
+task intTest(type:Test){
+	description = "Run integration tests (located in src/intTest/...)."
+	testClassesDirs = project.sourceSets.intTest.output.classesDirs
+	classpath = project.sourceSets.intTest.runtimeClasspath
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	intTestImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
