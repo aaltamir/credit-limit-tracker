@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +33,14 @@ public class PrnDataReceiver {
 
     private final StreamFactory prnStreamFactory;
 
+    /**
+     * Receives the PNR data from the stream provided by the factory and convert each line to a CreditLimitInfo
+     * object. This receiver ignore lines with wrong format logging an error. The idea of ignoring lines is not to
+     * loose the rest of the information of the stream.
+     * For privacy reasons the lines are never displayed in the log. The position is the only data provided plus extra
+     * information telling what is wrong.
+     * @return One CreditLimitInfo per line
+     */
     public List<CreditLimitInfo> receive() {
 
         final ArrayList<CreditLimitInfo> result =  new ArrayList<>();
@@ -38,6 +50,9 @@ public class PrnDataReceiver {
             String line;
 
             long lineNumber = 0;
+
+            // Skip the header
+            reader.readLine();
 
             while((line = reader.readLine()) != null) {
 
@@ -54,18 +69,33 @@ public class PrnDataReceiver {
                 final BigDecimal creditLimit;
 
                 try {
-                    creditLimit = new BigDecimal(line.substring(61, 73)).divide(new BigDecimal(100));
+                    creditLimit = new BigDecimal(line.substring(61, 74).trim()).divide(new BigDecimal(100), RoundingMode.UNNECESSARY);
                 } catch(final NumberFormatException e) {
-                    log.error("Invalid credit limit value ({}) at position {}. Source: {}", line.substring(61, 73), lineNumber, prnStreamFactory.getSource(), e);
+                    log.error("Invalid credit limit value ({}) at position {}. Source: {}", line.substring(61, 74), lineNumber, prnStreamFactory.getSource(), e);
                     continue;
                 }
 
+                final LocalDate birthDay;
 
+                try {
+                    birthDay = LocalDate.parse(line.substring(74, 82).trim(), DateTimeFormatter.ofPattern("yyyyMMdd"));
+                } catch(final DateTimeParseException e) {
+                    log.error("Unexpected birth date format ({}) at position {}. Source: {}", line.substring(74, 82), lineNumber, prnStreamFactory.getSource(), e);
+                    continue;
+                }
 
+                result.add(CreditLimitInfo.builder()
+                        .name(line.substring(0, 16).trim())
+                        .address(line.substring(16, 38).trim())
+                        .postcode(line.substring(38, 47).trim())
+                        .phone(line.substring(47, 61).trim())
+                        .creditLimit(creditLimit)
+                        .birthday(birthDay)
+                        .build());
             }
 
         } catch (IOException e) {
-
+            throw new DataInputException("Error reading PNR data", e);
         }
 
         return result;
