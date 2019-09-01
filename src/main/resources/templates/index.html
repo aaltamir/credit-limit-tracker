@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="css/styles.css" rel="stylesheet"/>
+    <title>Spring Boot Application</title>
+</head>
+<body>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Address</th>
+        <th scope="col">Postcode</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Credit Limit</th>
+        <th scope="col">Birthday</th>
+        <th scope="col">Source of Information</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${creditLimits.empty}">
+        <td colspan="7"> No information available </td>
+    </tr>
+
+    <tr th:each="limit : ${creditLimits}" th:class="not ${limit.name} or not ${limit.birthday} or not ${limit.creditLimit} ? 'table-danger'">
+        <td><span th:text="${limit.name}"> Name </span></td>
+        <td><span th:text="${limit.address}"> Address </span></td>
+        <td><span th:text="${limit.postcode}"> Address </span></td>
+        <td><span th:text="${limit.phone}"> Address </span></td>
+        <td class="text-right"><span th:text="${#numbers.formatDecimal(limit.creditLimit,1,2,'COMMA')}"> Address </span></td>
+        <td><span th:text="${#temporals.format(limit.birthday, 'dd-MM-yyyy')}"> Address </span></td>
+        <td><span th:text="${limit.source}"> Address </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

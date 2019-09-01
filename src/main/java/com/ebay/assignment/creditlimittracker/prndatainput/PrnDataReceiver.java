@@ -74,7 +74,7 @@ public class PrnDataReceiver implements DataReceiver {
                 final String creditLimitStr = line.substring(61, 74).trim();
 
                 try {
-                    creditLimit = new BigDecimal(creditLimitStr).divide(new BigDecimal(100), RoundingMode.UNNECESSARY);
+                    creditLimit = new BigDecimal(creditLimitStr).divide(new BigDecimal(100), 2,  RoundingMode.HALF_DOWN);
                 } catch(final NumberFormatException e) {
                     log.error("Invalid credit limit value ({}) at position {}. Source: {}", creditLimitStr, lineNumber, prnStreamFactory.getSource(), e);
                     creditLimit = null;

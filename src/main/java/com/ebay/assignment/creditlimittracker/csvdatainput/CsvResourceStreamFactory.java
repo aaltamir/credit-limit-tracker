@@ -15,7 +15,7 @@ class CsvResourceStreamFactory extends ResourceStreamFactory {
     }
 
     @Override
-    public String getCharSet() {
+    protected String getCharSet() {
         return StandardCharsets.UTF_8.name();
     }
 

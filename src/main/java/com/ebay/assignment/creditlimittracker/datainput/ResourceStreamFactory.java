@@ -16,6 +16,6 @@ public abstract class ResourceStreamFactory implements StreamFactory {
         return new InputStreamReader(resource.getInputStream(), getCharSet());
     }
 
-    public abstract String getCharSet();
+    protected abstract String getCharSet();
 
 }

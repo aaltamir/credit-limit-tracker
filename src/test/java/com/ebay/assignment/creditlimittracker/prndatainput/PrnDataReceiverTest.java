@@ -50,7 +50,7 @@ class PrnDataReceiverTest {
         Assertions.assertEquals("Voorstraat 32", result.get(0).getAddress());
         Assertions.assertEquals("3122gg", result.get(0).getPostcode());
         Assertions.assertEquals("020 3849381", result.get(0).getPhone());
-        Assertions.assertEquals(new BigDecimal("10000"), result.get(0).getCreditLimit());
+        Assertions.assertEquals(new BigDecimal("10000.00"), result.get(0).getCreditLimit());
         Assertions.assertEquals(LocalDate.of(1987,1, 1), result.get(0).getBirthday());
         Assertions.assertEquals("source-pnr", result.get(0).getSource());
     }
