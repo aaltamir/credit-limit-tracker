@@ -35,8 +35,8 @@ public class PrnDataReceiver {
 
     /**
      * Receives the PNR data from the stream provided by the factory and convert each line to a CreditLimitInfo
-     * object. This receiver ignore lines with wrong format logging an error. The idea of ignoring lines is not to
-     * loose the rest of the information of the stream.
+     * object. This receiver ignore values with wrong format logging an error (when a format is expected).
+     * The idea of ignoring values is not to loose the rest of the information of the stream.
      * For privacy reasons the lines are never displayed in the log. The position is the only data provided plus extra
      * information telling what is wrong.
      * @return One CreditLimitInfo per line
@@ -66,22 +66,24 @@ public class PrnDataReceiver {
 
                 // The data is received in cents
 
-                final BigDecimal creditLimit;
+                BigDecimal creditLimit;
+                final String creditLimitStr = line.substring(61, 74).trim();
 
                 try {
-                    creditLimit = new BigDecimal(line.substring(61, 74).trim()).divide(new BigDecimal(100), RoundingMode.UNNECESSARY);
+                    creditLimit = new BigDecimal(creditLimitStr).divide(new BigDecimal(100), RoundingMode.UNNECESSARY);
                 } catch(final NumberFormatException e) {
-                    log.error("Invalid credit limit value ({}) at position {}. Source: {}", line.substring(61, 74), lineNumber, prnStreamFactory.getSource(), e);
-                    continue;
+                    log.error("Invalid credit limit value ({}) at position {}. Source: {}", creditLimitStr, lineNumber, prnStreamFactory.getSource(), e);
+                    creditLimit = null;
                 }
 
-                final LocalDate birthDay;
+                LocalDate birthDay;
+                final String birthDayStr = line.substring(74, 82).trim();
 
                 try {
-                    birthDay = LocalDate.parse(line.substring(74, 82).trim(), DateTimeFormatter.ofPattern("yyyyMMdd"));
+                    birthDay = LocalDate.parse(birthDayStr, DateTimeFormatter.ofPattern("yyyyMMdd"));
                 } catch(final DateTimeParseException e) {
-                    log.error("Unexpected birth date format ({}) at position {}. Source: {}", line.substring(74, 82), lineNumber, prnStreamFactory.getSource(), e);
-                    continue;
+                    log.error("Unexpected birth date format ({}) at position {}. Source: {}", birthDayStr, lineNumber, prnStreamFactory.getSource(), e);
+                    birthDay = null;
                 }
 
                 result.add(CreditLimitInfo.builder()
@@ -91,6 +93,7 @@ public class PrnDataReceiver {
                         .phone(line.substring(47, 61).trim())
                         .creditLimit(creditLimit)
                         .birthday(birthDay)
+                        .source(prnStreamFactory.getSource())
                         .build());
             }
 
