@@ -1,1 +1,2 @@
-
+# Maximum receiving time in milliseconds
+receivingDataTimeout: 10000

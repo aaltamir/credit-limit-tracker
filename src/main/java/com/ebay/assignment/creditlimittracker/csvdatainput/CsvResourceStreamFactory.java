@@ -1,5 +1,6 @@
-package com.ebay.assignment.creditlimittracker.datainput;
+package com.ebay.assignment.creditlimittracker.csvdatainput;
 
+import com.ebay.assignment.creditlimittracker.datainput.ResourceStreamFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ class CsvResourceStreamFactory extends ResourceStreamFactory {
     }
 
     @Override
-    String getCharSet() {
+    public String getCharSet() {
         return StandardCharsets.UTF_8.name();
     }
 

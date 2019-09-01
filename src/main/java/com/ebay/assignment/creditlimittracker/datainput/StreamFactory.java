@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
  * This can be useful in the future if instead of local files we want to get the information from FTP or
  * other repositories.
  */
-interface StreamFactory {
+public interface StreamFactory {
     InputStreamReader reader() throws IOException;
 
     /**

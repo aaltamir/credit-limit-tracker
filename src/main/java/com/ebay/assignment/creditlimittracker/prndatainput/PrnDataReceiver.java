@@ -1,5 +1,8 @@
-package com.ebay.assignment.creditlimittracker.datainput;
+package com.ebay.assignment.creditlimittracker.prndatainput;
 
+import com.ebay.assignment.creditlimittracker.datainput.DataInputException;
+import com.ebay.assignment.creditlimittracker.datainput.DataReceiver;
+import com.ebay.assignment.creditlimittracker.datainput.StreamFactory;
 import com.ebay.assignment.creditlimittracker.tracker.CreditLimitInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +32,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class PrnDataReceiver {
+public class PrnDataReceiver implements DataReceiver {
 
     private final StreamFactory prnStreamFactory;
 
@@ -41,6 +44,7 @@ public class PrnDataReceiver {
      * information telling what is wrong.
      * @return One CreditLimitInfo per line
      */
+    @Override
     public List<CreditLimitInfo> receive() {
 
         final ArrayList<CreditLimitInfo> result =  new ArrayList<>();

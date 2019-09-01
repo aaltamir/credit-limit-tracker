@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 @RequiredArgsConstructor
-abstract class ResourceStreamFactory implements StreamFactory {
+public abstract class ResourceStreamFactory implements StreamFactory {
 
     private final Resource resource;
 
@@ -16,6 +16,6 @@ abstract class ResourceStreamFactory implements StreamFactory {
         return new InputStreamReader(resource.getInputStream(), getCharSet());
     }
 
-    abstract String getCharSet();
+    public abstract String getCharSet();
 
 }
