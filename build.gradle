@@ -24,6 +24,7 @@ configurations {
 	}
 	intTestCompile.extendsFrom testCompile
 	intTestRuntime.extendsFrom testRuntime
+	intTestImplementation.extendsFrom testImplementation
 }
 
 task intTest(type:Test){
